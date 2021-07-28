@@ -61,6 +61,11 @@ html
       input#link-img(size="35")
       input#titulo(size="35")
       input#descricao(size="35")
+      select#tema
+        option(value="esportes") Esportes
+        option(value="política") Política
+        option(value="entretenimento") Entretenimento
+        option(value="famosos") Famosos
       input#tema(size="35")
       input#link-noticia(size="35")
       button(type="submit")
@@ -82,14 +87,13 @@ html
         // if the submit button is pressed...
         messageForm.submit(function(e) {
           // avoid making a POST request
-          console.log("!!!! SUBMITED");
           e.preventDefault();
           // use the socket to send the input box's text
           var tabela = {};
           tabela.link_imagem  = $('#link-img').val();
           tabela.titulo       = $('#titulo').val();
           tabela.descricao    = $('#descricao').val();
-          tabela.tema         = $('#tema').val();
+          tabela.tema         = $( "#tema" ).val();
           tabela.link_noticia = $('#link-noticia').val();
           socket.emit('send message', tabela);
           messageBox.val(''); // clear the input box

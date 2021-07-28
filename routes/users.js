@@ -114,7 +114,7 @@ router.post('/', function(req, res, next) {
   console.log("aqui4");
   console.log(req.body.originalDetectIntentRequest.payload);
   */
- 
+  var temaEscolhido = req.body.queryResult.parameters.tema.toLowerCase();
   /*
   switch(reqJSON.queryResult.parameters.tema.toLowerCase()){
     case "esporte":
@@ -137,9 +137,14 @@ router.post('/', function(req, res, next) {
   var dados = serverModule.serverData();
   console.log(dados);
   for(var d of dados){
-    dadosCards.push(card(d));
+    if(d.tema==temaEscolhido) dadosCards.push(card(d));
   }
   console.log(dadosCards);
+  if(dadosCards.length==0 ) {
+    responseResult.fulfillmentMessages = msgNoNews();
+    res.send(responseResult);
+    return;
+  }
   responseResult.fulfillmentMessages = dadosCards;
   //card(req.body.queryResult.queryText);
   console.log(responseResult);
@@ -153,7 +158,30 @@ router.post('/', function(req, res, next) {
     //tabela.tema = dados[3];
     //tabela.link_noticia = dados[4];
 
-    
+function msgNoNews(){
+  return [
+    {
+      "quickReplies": {
+        "title": "Desculpe sem notícias sobre esse tema.\nSobre quais temas de notícias gostaria de saber?",
+        "quickReplies": [
+          "Esportes",
+          "Política",
+          "Entretenimento",
+          "Famosos"
+        ]
+      },
+      "platform": "FACEBOOK"
+    },
+    {
+      "text": {
+        "text": [
+          ""
+        ]
+      }
+    }
+  ];
+}
+
 function card(t){
   return {
     "card": {
