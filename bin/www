@@ -18,8 +18,31 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-
+const socketIO = require('socket.io');
 var server = http.createServer(app);
+const io = socketIO(server);
+
+var serverData = [];
+exports.serverData = function(){return serverData};
+
+io.sockets.on('connection', function(socket) {
+  
+  // when a 'send message' message is sent along with some data...
+  socket.on('send message', function(data) {
+    // use the web sockets to emit the message to everyone else
+    io.sockets.emit('new message', data);
+    
+    console.log('Someone posted:', data); // make a log entry
+    //var dados = data.split(',');
+    //var tabela = {};
+    //tabela.link_imagem = dados[0];
+    //tabela.titulo = dados[1];
+    //tabela.descricao = dados[2];
+    //tabela.tema = dados[3];
+    //tabela.link_noticia = dados[4];
+    serverData.push(data);
+  });
+});
 
 /**
  * Listen on provided port, on all network interfaces.

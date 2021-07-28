@@ -3,5 +3,103 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+
+    // jQuery makes reading user data and injecting data easier
+    script(src="//code.jquery.com/jquery-1.11.2.min.js")
+    script(src="//code.jquery.com/jquery-migrate-1.2.1.min.js")
+    
+    // Socket.io reads and sends small data bits to and from the server
+    script(src="/javascripts/socket.io.js")
   body
-    block content
+    // where the messages will go
+    //ul#chat
+
+    div
+      table
+        thead
+          tr
+            th Link para imagem
+            th Título
+            th Descrição
+            th Tema
+            th Link
+        tbody#chat
+            tr
+            
+            //form#send-row
+            //  td
+            //      input#link-img(size="35")
+            //  td
+            //      input#titulo(size="35")
+            //  td
+            //      input#descricao(size="35")
+            //  td
+            //      input#tema(size="35")
+            //  td
+            //      input#link-noticia(size="35")
+            //      button(type="submit")
+                  
+            tr
+              td a2
+              td a22
+              td a23
+              td a24
+              td a25
+            tr
+              td a3
+              td a32
+              td a33
+              td a34
+              td a35
+            tr
+              td a4
+            tr
+              td a5
+
+    // the place to type the new messages
+    form#send-message
+      input#link-img(size="35")
+      input#titulo(size="35")
+      input#descricao(size="35")
+      input#tema(size="35")
+      input#link-noticia(size="35")
+      button(type="submit")
+    
+    // the part that manages all the client-side Socket.io thingies
+    script.
+      
+      // wait until the HTML document is ready, then...
+      $(document).ready(function() {
+      
+        // make a web socket connection using Socket.io
+        var socket = io.connect();
+        
+        // cache the HTML elements for speed and ease
+        var messageForm = $('#send-message');
+        var messageBox = $('#message');
+        var chat = $('#chat');
+        
+        // if the submit button is pressed...
+        messageForm.submit(function(e) {
+          // avoid making a POST request
+          console.log("!!!! SUBMITED");
+          e.preventDefault();
+          // use the socket to send the input box's text
+          var tabela = {};
+          tabela.link_imagem  = $('#link-img').val();
+          tabela.titulo       = $('#titulo').val();
+          tabela.descricao    = $('#descricao').val();
+          tabela.tema         = $('#tema').val();
+          tabela.link_noticia = $('#link-noticia').val();
+          socket.emit('send message', tabela);
+          messageBox.val(''); // clear the input box
+        });
+        
+        // if the web socket gets a 'new message' and data...
+        socket.on('new message', function(data){
+          // append it to the message list
+          chat.append("<tr><td>"+data.link_imagem+"</td><td>"+data.titulo
+          +"</td><td>"+data.descricao+"</td><td>"+"</td><td>"+data.tema+"</td><td>"+"</td><td>"+data.link_noticia);
+          //chat.append(data + "</br>");
+        });
+      });

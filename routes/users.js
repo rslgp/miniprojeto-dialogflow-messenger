@@ -2,6 +2,7 @@ var express = require('express');
 const { response } = require('../app');
 var router = express.Router();
 
+var serverModule = require('../bin/www');
 
 /* req.body
 {
@@ -101,6 +102,7 @@ var router = express.Router();
 
 router.post('/', function(req, res, next) {
   console.log(req.body);
+  console.log(serverModule.serverData());
   let responseResult = {};
   /*
   console.log("aqui");
@@ -131,28 +133,59 @@ router.post('/', function(req, res, next) {
 
   }
   */
-
-  responseResult.fulfillmentMessages = card(req.body.queryResult.queryText);
-
+  var dadosCards = [];
+  var dados = serverModule.serverData();
+  console.log(dados);
+  for(var d of dados){
+    dadosCards.push(card(d));
+  }
+  console.log(dadosCards);
+  responseResult.fulfillmentMessages = dadosCards;
+  //card(req.body.queryResult.queryText);
+  console.log(responseResult);
   res.send(responseResult);
   
 });
+    //var tabela = {};
+    //tabela.link_imagem = dados[0];
+    //tabela.titulo = dados[1];
+    //tabela.descricao = dados[2];
+    //tabela.tema = dados[3];
+    //tabela.link_noticia = dados[4];
 
-function card(m){
-  return [{
+    
+function card(t){
+  return {
     "card": {
-      "title": m,
-      "subtitle": "essa noticia eh mt boa"+m,
-      "imageUri": "https://cdn.leroymerlin.com.br/products/abajur_de_mesa_infantil_bola_de_futebol_preto_e_branco_1567079268_902d_600x600.png",
+      "title": t.titulo,
+      "subtitle": t.descricao,
+      "imageUri": t.link_imagem,
       "buttons": [
         {
           "text": "clique aqui para ver",
-          "postback": "https://cdn.leroymerlin.com.br/products/abajur_de_mesa_infantil_bola_de_futebol_preto_e_branco_1567079268_902d_600x600.png"
+          "postback": t.link_noticia
         }
       ]
     },
     "platform": "FACEBOOK"
-  }];
+  };
 }
+//function card(){
+//  var m = "teste";
+//  return [{
+//    "card": {
+//      "title": m,
+//      "subtitle": "essa noticia eh mt boa"+m,
+//      "imageUri": "https://cdn.leroymerlin.com.br/products/abajur_de_mesa_infantil_bola_de_futebol_preto_e_branco_1567079268_902d_600x600.png",
+//      "buttons": [
+//        {
+//          "text": "clique aqui para ver",
+//          "postback": "https://cdn.leroymerlin.com.br/products/abajur_de_mesa_infantil_bola_de_futebol_preto_e_branco_1567079268_902d_600x600.png"
+//        }
+//      ]
+//    },
+//    "platform": "FACEBOOK"
+//  }];
+//}
 
 module.exports = router;
