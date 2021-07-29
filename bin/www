@@ -12,7 +12,7 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '80');
+var port = normalizePort(process.env.PORT || '8080');
 app.set('port', port);
 
 /**
@@ -42,6 +42,23 @@ io.sockets.on('connection', function(socket) {
     //tabela.link_noticia = dados[4];
     serverData.push(data);
   });
+
+  socket.on('deletar', function(codigo){
+    console.log(serverData);
+    var i=0;
+    for(var t of serverData){
+      if(t.codigo == codigo){ serverData.splice(i,1);}
+      i++;
+    }
+    console.log("\napos remocao\n:");
+    console.log(serverData);
+  });
+  
+  //socket.on('reload data', function(){
+  //  socket.emit('data fill', serverData);
+  //});
+  
+
 });
 
 /**

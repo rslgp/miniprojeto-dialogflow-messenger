@@ -18,14 +18,13 @@ html
       table
         thead
           tr
+            th codigo
             th Link para imagem
             th Título
             th Descrição
             th Tema
             th Link para noticia
         tbody#chat
-            tr
-            
             //form#send-row
             //  td
             //      input#link-img(size="35")
@@ -40,7 +39,8 @@ html
             //      button(type="submit")
                   
             tr
-              td https://png.pngtree.com/element_our/md/20180426/md_5ae13aed62009.jpg
+              td 0
+              td <img style='width:100px; height:100px' src=https://png.pngtree.com/element_our/md/20180426/md_5ae13aed62009.jpg>
               td ---  titulo  ---
               td ---  descrição ---
               td ---  tema  ---
@@ -61,24 +61,46 @@ html
     
     // the part that manages all the client-side Socket.io thingies
     script.
-      
+      var socket;
+      var indiceCrescente=1;
+
+      function deletar(codigo){
+        var i=0;
+        for(var c of chat.children){
+          if(codigo == Number(c.children[0].innerText) ){
+            document.getElementsByTagName("table")[0].deleteRow(i+1);
+          }
+          i++;
+        }
+  
+        socket.emit('deletar',codigo);
+      }
+
       // wait until the HTML document is ready, then...
       $(document).ready(function() {
       
         // make a web socket connection using Socket.io
-        var socket = io.connect();
+        socket = io.connect();
         
+        //if(chat.children.length==1) socket.emit('reload data');
+        //socket.on('data fill', function(d){
+        //  for(var data at d){
+        //    padraoFillTable(data);
+        //  }
+        //});
+        
+
         // cache the HTML elements for speed and ease
         var messageForm = $('#send-message');
-        var messageBox = $('#message');
+        var messageBox = $('#message');        
         var chat = $('#chat');
-        
         // if the submit button is pressed...
         messageForm.submit(function(e) {
           // avoid making a POST request
           e.preventDefault();
           // use the socket to send the input box's text
           var tabela = {};
+          tabela.codigo = indiceCrescente;
           tabela.link_imagem  = $('#link-img').val();
           tabela.titulo       = $('#titulo').val();
           tabela.descricao    = $('#descricao').val();
@@ -91,8 +113,10 @@ html
         // if the web socket gets a 'new message' and data...
         socket.on('new message', function(data){
           // append it to the message list
-          chat.append("<tr><td>"+data.link_imagem+"</td><td>"+data.titulo
-          +"</td><td>"+data.descricao+"</td><td>"+"</td><td>"+data.tema+"</td><td>"+"</td><td>"+data.link_noticia);
-          //chat.append(data + "</br>");
+                    
+            chat.append("<tr><td>"+ indiceCrescente +"</td><td><img style='width:100px; height:100px' src="+data.link_imagem+"></td><td>"+data.titulo
+          +"</td><td>"+data.descricao+"</td><td>"+data.tema+"</td><td><a target='_blank' href="+data.link_noticia+">link</a> </td><td><button onclick='deletar("+indiceCrescente+")'> X </button></td></tr>");
+          indiceCrescente++;
+            //chat.append(data + "</br>");
         });
       });
