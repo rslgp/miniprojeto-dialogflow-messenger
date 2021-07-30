@@ -13,7 +13,9 @@ html
   body
     // where the messages will go
     //ul#chat
-
+  div 
+    label PIN: 
+    input#pin
     div
       table
         thead
@@ -106,6 +108,7 @@ html
           tabela.descricao    = $('#descricao').val();
           tabela.tema         = $( "#tema" ).val();
           tabela.link_noticia = $('#link-noticia').val();
+          tabela.pin = $('#pin').val();
           socket.emit('send message', tabela);
           messageBox.val(''); // clear the input box
         });
@@ -113,10 +116,15 @@ html
         // if the web socket gets a 'new message' and data...
         socket.on('new message', function(data){
           // append it to the message list
-                    
+            if(data.pin=='OK'){        
             chat.append("<tr><td>"+ indiceCrescente +"</td><td><img style='width:100px; height:100px' src="+data.link_imagem+"></td><td>"+data.titulo
           +"</td><td>"+data.descricao+"</td><td>"+data.tema+"</td><td><a target='_blank' href="+data.link_noticia+">link</a> </td><td><button onclick='deletar("+indiceCrescente+")'> X </button></td></tr>");
           indiceCrescente++;
+            }
+            else{
+              alert('pin invalido');
+            }
             //chat.append(data + "</br>");
         });
+        
       });

@@ -24,12 +24,20 @@ const io = socketIO(server);
 
 var serverData = [];
 exports.serverData = function(){return serverData};
+const pincode='12345';
 
 io.sockets.on('connection', function(socket) {
   
   // when a 'send message' message is sent along with some data...
   socket.on('send message', function(data) {
     // use the web sockets to emit the message to everyone else
+    if(data.pin!=pincode){
+      data.pin='error';
+      
+      io.sockets.emit('new message', data);
+      return;
+    }
+    data.pin='OK';
     io.sockets.emit('new message', data);
     
     console.log('Someone posted:', data); // make a log entry
